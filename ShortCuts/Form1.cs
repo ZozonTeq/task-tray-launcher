@@ -54,6 +54,11 @@ namespace ShortCuts
                 contextMenuStrip1.Items[i].Name = files[i];
                 contextMenuStrip1.Items[i].Text = files[i];
                 contextMenuStrip1.Items[i].Click += OnPressFile;
+
+                string path = files[i];
+                Icon appIcon =
+                  System.Drawing.Icon.ExtractAssociatedIcon(path);
+                contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
             }
 
             contextMenuStrip1.Items.Add("Exit").Name = "Exit";
