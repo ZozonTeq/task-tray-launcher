@@ -22,7 +22,7 @@ namespace ShortCuts
         private void Form1_Load(object sender, EventArgs e)
         {
             notifyIcon1.Visible = true;
-            if (!Directory.Exists("files")) Directory.CreateDirectory("files");
+            if (!Directory.Exists("shortcuts")) Directory.CreateDirectory("shortcuts");
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -47,7 +47,7 @@ namespace ShortCuts
         private void contextMenuStrip1_Opened(object sender, EventArgs e)
         {
             contextMenuStrip1.Items.Clear();
-            string[] files = Directory.GetFiles("files");
+            string[] files = Directory.GetFiles("shortcuts");
             for (int i = 0; i < files.Length; i++)
             {
                 contextMenuStrip1.Items.Add(files[i]);
@@ -128,8 +128,8 @@ namespace ShortCuts
         }
         private void OnPressOpen(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("EXPLORER.EXE", $@"/select,""files""");
-            Console.WriteLine($"{Directory.GetCurrentDirectory() + "\\files\\"}");
+            System.Diagnostics.Process.Start("EXPLORER.EXE", $@"/select,""shortcuts""");
+            Console.WriteLine($"{Directory.GetCurrentDirectory() + "\\shortcuts\\"}");
         }
         private void OnPressReload(object sender,EventArgs e)
         {
