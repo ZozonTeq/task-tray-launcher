@@ -105,17 +105,21 @@ namespace ShortCuts
 
             }
 
-            contextMenuStrip1.Items.Add("Exit").Name = "Exit";
-            contextMenuStrip1.Items.Find("Exit", false)[0].Text = "Exit";
-            contextMenuStrip1.Items.Find("Exit", false)[0].Click += OnPressExit;
+
+
+
+            contextMenuStrip1.Items.Add("Open").Name = "Open";
+            contextMenuStrip1.Items.Find("Open", false)[0].Text = "Open";
+            contextMenuStrip1.Items.Find("Open", false)[0].Click += OnPressOpen;
+
 
             contextMenuStrip1.Items.Add("Reload").Name = "Reload";
             contextMenuStrip1.Items.Find("Reload", false)[0].Text = "Reload";
             contextMenuStrip1.Items.Find("Reload", false)[0].Click += OnPressReload;
 
-            contextMenuStrip1.Items.Add("Open").Name = "Open";
-            contextMenuStrip1.Items.Find("Open", false)[0].Text = "Open";
-            contextMenuStrip1.Items.Find("Open", false)[0].Click += OnPressOpen;
+            contextMenuStrip1.Items.Add("Exit").Name = "Exit";
+            contextMenuStrip1.Items.Find("Exit", false)[0].Text = "Exit";
+            contextMenuStrip1.Items.Find("Exit", false)[0].Click += OnPressExit;
             foreach (ToolStripItem o in contextMenuStrip1.Items)
             {
                 Console.WriteLine(o.Name);
