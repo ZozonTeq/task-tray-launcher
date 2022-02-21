@@ -94,7 +94,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="README.mb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

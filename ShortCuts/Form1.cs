@@ -50,15 +50,59 @@ namespace ShortCuts
             string[] files = Directory.GetFiles("shortcuts");
             for (int i = 0; i < files.Length; i++)
             {
+                string ext = Path.GetExtension(files[i].ToString());
+
                 contextMenuStrip1.Items.Add(files[i]);
                 contextMenuStrip1.Items[i].Name = files[i];
-                contextMenuStrip1.Items[i].Text = files[i];
+                contextMenuStrip1.Items[i].Text = files[i].Replace("shortcuts\\","");
                 contextMenuStrip1.Items[i].Click += OnPressFile;
 
-                string path = files[i];
-                Icon appIcon =
-                  System.Drawing.Icon.ExtractAssociatedIcon(path);
-                contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
+                if (ext == ".lnk")
+                {
+                    string path = "";
+                    bool error = false;
+                    try
+                    {
+                        IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
+                        IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(files[i].ToString());
+                        string targetPath = shortcut.TargetPath.ToString();
+
+                        path = files[i];
+                        Icon appIcon =
+                          System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath);
+                        contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
+                    }//ショートカット先のパスを取得し実行
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
+                            IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(files[i].ToString());
+                            string targetPath = shortcut.TargetPath.ToString();
+
+                            path = files[i];
+                            Icon appIcon =
+                              System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath.Replace("C:\\Program Files (x86)\\", "C:\\Program Files\\"));
+                            contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
+                        }
+                        catch (Exception ee)
+                        {
+                            path = files[i];
+                            Icon appIcon =
+                              System.Drawing.Icon.ExtractAssociatedIcon(path);
+                            contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
+                        }//普通に実行
+                    }
+                }
+                else
+                {
+                    string path = files[i];
+                    Icon appIcon =
+                      System.Drawing.Icon.ExtractAssociatedIcon(path);
+                    contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
+                }
+
+
             }
 
             contextMenuStrip1.Items.Add("Exit").Name = "Exit";
@@ -80,13 +124,16 @@ namespace ShortCuts
         private void OnPressExit(object sender,EventArgs e)=> this.Close();
         private void OnPressFile(object sender,EventArgs e)
         {
-            string ext = Path.GetExtension(sender.ToString());
+            string tag = "shortcuts\\"+sender.ToString();
+            Console.WriteLine(tag);
+            string ext = Path.GetExtension(tag);
             if(ext == ".lnk")
             {
                 bool error = false;
                 IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
-                IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(sender.ToString());
+                IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(tag);
                 string targetPath = shortcut.TargetPath.ToString();
+                
                 try
                 {
                     System.Diagnostics.Process.Start(targetPath);
@@ -105,12 +152,21 @@ namespace ShortCuts
                     try
                     {
                         System.Diagnostics.Process.Start(targetPath.Replace("C:\\Program Files (x86)\\", "C:\\Program Files\\"));
-                    }
+                    }//x86を消して実行
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                         Console.WriteLine($"==========\nERROR FOUND\nwhile executing {targetPath.Replace("C:\\Program Files (x86)\\", "C:\\Program Files\\")}");
                         error = true;
+                        try
+                        {
+                            System.Diagnostics.Process.Start(tag);
+                        }
+                        catch (Exception exe)
+                        {
+                            Console.WriteLine(exe.Message);
+                        }
+
                     }
                 }
             }
@@ -118,7 +174,7 @@ namespace ShortCuts
             {
                 try
                 {
-                    System.Diagnostics.Process.Start(sender.ToString());
+                    System.Diagnostics.Process.Start(tag);
                 }
                 catch (Exception ex)
                 {
