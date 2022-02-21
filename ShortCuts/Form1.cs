@@ -170,7 +170,7 @@ namespace ShortCuts
                         error = true;
                         try
                         {
-                            System.Diagnostics.Process.Start(sender.ToString());
+                            System.Diagnostics.Process.Start(tag);
                         }
                         catch (Exception exe)
                         {
