@@ -120,6 +120,12 @@ namespace ShortCuts
             {
                 Console.WriteLine(o.Name);
             }
+            for(int i = 0; i < contextMenuStrip1.Items.Count; i++)
+            {
+                contextMenuStrip1.Items[i].ForeColor = Color.Black;
+                contextMenuStrip1.Items[i].BackColor = Color.FromArgb(255, 255, 255, 255);
+            }
+             
         }
         private void OnPressExit(object sender,EventArgs e)=> this.Close();
         private void OnPressFile(object sender,EventArgs e)
@@ -160,7 +166,7 @@ namespace ShortCuts
                         error = true;
                         try
                         {
-                            System.Diagnostics.Process.Start(tag);
+                            System.Diagnostics.Process.Start(sender.ToString());
                         }
                         catch (Exception exe)
                         {
