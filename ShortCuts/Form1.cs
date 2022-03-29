@@ -23,6 +23,7 @@ namespace ShortCuts
         {
             notifyIcon1.Visible = true;
             if (!Directory.Exists("shortcuts")) Directory.CreateDirectory("shortcuts");
+            this.Hide();
         }
 
 
