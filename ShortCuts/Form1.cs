@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,25 +11,33 @@ using System.Windows.Forms;
 
 namespace ShortCuts
 {
+
     public partial class Form1 : Form
     {
+        public static class Texts//テキスト格納
+        {
+            public static string Replace = "置き換え";
+            public static string Exit = "終了";
+            public static string Restart = "再起動";
+            public static string Reload = "再読み込み";
+            public static string Open = "開く";
+        }
         public Form1()
         {
             InitializeComponent();
         }
-
-
         private void Form1_Load(object sender, EventArgs e)
         {
+            Hide();
             notifyIcon1.Visible = true;
             if (!Directory.Exists("shortcuts")) Directory.CreateDirectory("shortcuts");
-            this.Hide();
+            if (File.Exists("logo.ico"))
+            {
+                string iconPath = "logo.ico";
+                Icon icon = new Icon(iconPath,48,48);
+                notifyIcon1.Icon = icon;
+            }
         }
-
-
-
-
-
         private void contextMenuStrip1_Closed(object sender, ToolStripDropDownClosedEventArgs e)
         {
             contextMenuStrip1 = new ContextMenuStrip();
@@ -38,8 +46,7 @@ namespace ShortCuts
             contextMenuStrip1.Items.Add("Reload").Name = "Reload";
             contextMenuStrip1.Items.Add("Open").Name = "Open";
         }
-
-        private void contextMenuStrip1_Opened(object sender, EventArgs e)
+        private void initContextMenu()//コンテクストメニューの初期化
         {
             contextMenuStrip1.Items.Clear();
             string[] files = Directory.GetFiles("shortcuts");
@@ -49,90 +56,97 @@ namespace ShortCuts
 
                 contextMenuStrip1.Items.Add(files[i]);
                 contextMenuStrip1.Items[i].Name = files[i];
-                contextMenuStrip1.Items[i].Text = files[i].Replace("shortcuts\\","");//いらない奴消す
-                contextMenuStrip1.Items[i].Click += OnPressFile;
+                contextMenuStrip1.Items[i].Text = files[i].Replace("shortcuts\\", "");//いらない奴消す
+                contextMenuStrip1.Items[i].Click += OnPressFile;//イベントの設定
 
-                //画像の設定
-                if (ext == ".lnk")
+
+                if (ext == ".lnk")//アイテムがショートカットだった場合
                 {
                     string path = "";
+                    bool success = true;
+                    IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
                     try
                     {
-                        IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
                         IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(files[i].ToString());
                         string targetPath = shortcut.TargetPath.ToString();
                         path = files[i];
-                        Icon appIcon =
-                          System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath);
+                        Icon appIcon = Icon.ExtractAssociatedIcon(shortcut.TargetPath);
                         contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
                     }//ショートカット先のパスを取得しビットマップを取得
-                    catch (Exception ex)
+                    catch (Exception e)
+                    {
+                        success = false;
+                    }
+                    if (!success)
                     {
                         try
                         {
-                            IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
                             IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(files[i].ToString());
                             string targetPath = shortcut.TargetPath.ToString();
 
                             path = files[i];
-                            Icon appIcon =
-                              System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath.Replace("C:\\Program Files (x86)\\", "C:\\Program Files\\"));
-                            contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
+                            Icon appIcon = Icon.ExtractAssociatedIcon(shortcut.TargetPath.Replace("C:\\Program Files (x86)\\", "C:\\Program Files\\"));
+                            contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();//イメージを設定
                         }//(x86)を消してビットマップ取得。
-                        catch (Exception ee)
+                        catch (Exception e)
                         {
-                            try
-                            {
-                                path = files[i];
-                                Icon appIcon =
-                                  System.Drawing.Icon.ExtractAssociatedIcon(path);
-                                contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
-                            }//ショートカットからビットマップ取得
-                            catch (Exception ee2)
-                            {
-
-                            }
+                            success = false;
+                        }
+                    }
+                    else if (!success)
+                    {
+                        try
+                        {
+                            path = files[i];
+                            Icon appIcon = Icon.ExtractAssociatedIcon(path);
+                            contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();//イメージを設定
+                            success = true;
+                        }
+                        catch (Exception e)
+                        {
+                            success = false;
                         }
                     }
                 }//ショートカットファイルだったら
                 else
                 {
                     string path = files[i];
-                    Icon appIcon =
-                      System.Drawing.Icon.ExtractAssociatedIcon(path);
+                    Icon appIcon = System.Drawing.Icon.ExtractAssociatedIcon(path);
                     contextMenuStrip1.Items[i].Image = appIcon.ToBitmap();
                 }
                 //画像の設定終わり
+
             }
+            contextMenuStrip1.Items.Add("Splitter").Name = "Splitter";
+            contextMenuStrip1.Items.Find("Splitter", false)[0].Text = " ";
 
-            {
-                contextMenuStrip1.Items.Add("Open").Name = "Open";
-                contextMenuStrip1.Items.Find("Open", false)[0].Text = "Open";
-                contextMenuStrip1.Items.Find("Open", false)[0].Click += OnPressOpen;
+            contextMenuStrip1.Items.Add("Open").Name = "Open";
+            contextMenuStrip1.Items.Find("Open", false)[0].Text = Texts.Open;
+            contextMenuStrip1.Items.Find("Open", false)[0].Click += OnPressOpen;
 
+            contextMenuStrip1.Items.Add("Reload").Name = "Reload";
+            contextMenuStrip1.Items.Find("Reload", false)[0].Text = Texts.Reload;
+            contextMenuStrip1.Items.Find("Reload", false)[0].Click += OnPressReload;
 
-                contextMenuStrip1.Items.Add("Reload").Name = "Reload";
-                contextMenuStrip1.Items.Find("Reload", false)[0].Text = "Reload";
-                contextMenuStrip1.Items.Find("Reload", false)[0].Click += OnPressReload;
+            contextMenuStrip1.Items.Add("Exit").Name = "Exit";
+            contextMenuStrip1.Items.Find("Exit", false)[0].Text = Texts.Exit;
+            contextMenuStrip1.Items.Find("Exit", false)[0].Click += OnPressExit;
 
-                contextMenuStrip1.Items.Add("Exit").Name = "Exit";
-                contextMenuStrip1.Items.Find("Exit", false)[0].Text = "Exit";
-                contextMenuStrip1.Items.Find("Exit", false)[0].Click += OnPressExit;
-            }//デフォルトのアイテム
-
-            foreach (ToolStripItem o in contextMenuStrip1.Items)
-            {
-                Console.WriteLine(o.Name);
-            }
-            for(int i = 0; i < contextMenuStrip1.Items.Count; i++)
+            for (int i = 0; i < contextMenuStrip1.Items.Count; i++)
             {
                 contextMenuStrip1.Items[i].ForeColor = Color.Black;
-                contextMenuStrip1.Items[i].BackColor = Color.FromArgb(255, 255, 255, 255);
+                contextMenuStrip1.Items[i].BackColor = Color.White;
+                contextMenuStrip1.Items[i].Margin = Padding.Empty;
             }//アイテムの見た目設定。
-             
         }
-        private void OnPressExit(object sender,EventArgs e)=> this.Close();
-        private void OnPressFile(object sender,EventArgs e)
+
+        private void contextMenuStrip1_Opened(object sender, EventArgs e)
+        {
+            initContextMenu();//コンテクストメニューの初期化
+        }
+        private void OnPressExit(object sender,EventArgs e)=> Close();//プロセス終了
+
+        private void OnPressFile(object sender,EventArgs e)//ショートカットアイテムクリック時
         {
             string tag = "shortcuts\\"+sender.ToString();
             Console.WriteLine(tag);
@@ -142,27 +156,35 @@ namespace ShortCuts
                 IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
                 IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(tag);
                 string targetPath = shortcut.TargetPath.ToString();
+                bool success = true;
                 try
                 {
-                    System.Diagnostics.Process.Start(targetPath);
+                    System.Diagnostics.Process.Start(targetPath);//普通に実行
                 }
                 catch (Exception ex)
+                {
+                    success = false;
+                }
+                if (!success)
                 {
                     try
                     {
                         System.Diagnostics.Process.Start(targetPath.Replace("C:\\Program Files (x86)\\", "C:\\Program Files\\"));
                     }//x86を消して実行
-                    catch (Exception eex)
+                    catch (Exception ex)
                     {
-                        try
-                        {
-                            System.Diagnostics.Process.Start(tag);
-                        }
-                        catch (Exception exe)
-                        {
-                           
-                        }
-
+                        success=false;
+                    }
+                }
+                if (!success)
+                {
+                    try
+                    {
+                        System.Diagnostics.Process.Start(tag);
+                    }
+                    catch (Exception ex)
+                    {
+                        success = false;
                     }
                 }
             }
@@ -178,12 +200,12 @@ namespace ShortCuts
                 }
             }//通常の実行
         }
-        private void OnPressOpen(object sender, EventArgs e)
+        private void OnPressOpen(object sender, EventArgs e)//開くボタンを押したとき
         {
             System.Diagnostics.Process.Start("EXPLORER.EXE", $@"shortcuts");
             Console.WriteLine($"{Directory.GetCurrentDirectory() + "\\shortcuts\\"}");
         }
-        private void OnPressReload(object sender,EventArgs e)
+        private void OnPressReload(object sender,EventArgs e)//再読み込みボタン押したとき
         {
             Application.Restart();
         }
