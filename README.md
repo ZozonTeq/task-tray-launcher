@@ -1,3 +1,4 @@
+### [English](README.md) [日本語](README.JP.MD)
 # task-tray-launcher
 This program add a shortcuts menu to the task tray.
 # Preview
