@@ -1,6 +1,8 @@
 ### [English](README.md) [日本語](README.JP.MD)
 # task-tray-launcher
 Windowsのタスクトレイにショートカットメニューを追加します。
+# プレビュー
+![Animation](https://user-images.githubusercontent.com/77091655/196412059-0c77d067-5c05-4e27-81ae-7a3d854ca89c.gif)
 # 使い方
 起動するとタスクトレイにロケットのアイコンが表示され、そのアイコンを右クリックすることでランチャーを開くことができます。  
 ランチャー内のアイテムをクリックすることで、そのアイテムを閲覧したり、起動したりできます。  
