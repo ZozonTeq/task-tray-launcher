@@ -2,7 +2,8 @@
 # task-tray-launcher
 This program add a shortcuts menu to the task tray.
 # Preview
-hoge
+![Animation](https://user-images.githubusercontent.com/77091655/196412059-0c77d067-5c05-4e27-81ae-7a3d854ca89c.gif)
+
 # Download
 https://github.com/zozonteq/task-tray-launcher/releases/
 # how to use
