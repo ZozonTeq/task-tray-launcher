@@ -21,6 +21,7 @@ namespace ShortCuts
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.Hide();
             notifyIcon1.Visible = true;
             if (!Directory.Exists("shortcuts")) Directory.CreateDirectory("shortcuts");
         }
