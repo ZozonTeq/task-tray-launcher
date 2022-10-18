@@ -26,12 +26,12 @@ namespace ShortCuts
         {
             InitializeComponent();
         }
-        private void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)//読み込み時
         {
             Hide();
             notifyIcon1.Visible = true;
-            if (!Directory.Exists("shortcuts")) Directory.CreateDirectory("shortcuts");
-            if (File.Exists("logo.ico"))
+            if (!Directory.Exists("shortcuts")) Directory.CreateDirectory("shortcuts");//ショートカットをぶち込むディレクトリ作成。
+            if (File.Exists("logo.ico"))// カスタムアイコンの設定。
             {
                 string iconPath = "logo.ico";
                 Icon icon = new Icon(iconPath,48,48);
@@ -54,9 +54,9 @@ namespace ShortCuts
             {
                 string ext = Path.GetExtension(files[i].ToString());//拡張子
 
-                contextMenuStrip1.Items.Add(files[i]);
-                contextMenuStrip1.Items[i].Name = files[i];
-                contextMenuStrip1.Items[i].Text = files[i].Replace("shortcuts\\", "");//いらない奴消す
+                contextMenuStrip1.Items.Add(files[i]);//コンテクストメニューにアイテム追加
+                contextMenuStrip1.Items[i].Name = files[i];//名前を設定
+                contextMenuStrip1.Items[i].Text = files[i].Replace("shortcuts\\", "");//表示名の設定
                 contextMenuStrip1.Items[i].Click += OnPressFile;//イベントの設定
 
 
@@ -150,7 +150,7 @@ namespace ShortCuts
         {
             string tag = "shortcuts\\"+sender.ToString();
             Console.WriteLine(tag);
-            string ext = Path.GetExtension(tag);
+            string ext = Path.GetExtension(tag);//拡張子
             if(ext == ".lnk")
             {
                 IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
@@ -170,7 +170,7 @@ namespace ShortCuts
                     try
                     {
                         System.Diagnostics.Process.Start(targetPath.Replace("C:\\Program Files (x86)\\", "C:\\Program Files\\"));
-                    }//x86を消して実行
+                    }//Program Files (x86)をProgram Filesに置き換えて実行。
                     catch (Exception ex)
                     {
                         success=false;
@@ -188,7 +188,7 @@ namespace ShortCuts
                     }
                 }
             }
-            else
+            else//.lnk以外の場合
             {
                 try
                 {
@@ -203,11 +203,11 @@ namespace ShortCuts
         private void OnPressOpen(object sender, EventArgs e)//開くボタンを押したとき
         {
             System.Diagnostics.Process.Start("EXPLORER.EXE", $@"shortcuts");
-            Console.WriteLine($"{Directory.GetCurrentDirectory() + "\\shortcuts\\"}");
+            //Console.WriteLine($"{Directory.GetCurrentDirectory() + "\\shortcuts\\"}");
         }
         private void OnPressReload(object sender,EventArgs e)//再読み込みボタン押したとき
         {
-            Application.Restart();
+            Application.Restart();//再起動する。
         }
 
 
